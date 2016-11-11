@@ -15,49 +15,30 @@ To infer or find the relationships between different nodes or users, Graph algor
 * A HashMap is used to hold the userID and an object that comprises of it's friends list (with whom the user had direct transaction) and some info necessary to perform some inference operations. The friends list is built using HashSet as for the algorithm I chose, multiple transactions between same users are not necessary. And moreover the search in hashset is constant time. HashMap is used as the lookup speeds at different users' data would be O(1) and its easy to store as well as easy to port to servers.
 
 ## Details of Implementation
-###Modelling of Graph
+### Modelling of Graph
 By reading the batch_payments, the graph is modelled based on the transactions between different users. An edge between two users is bi-directional, so user-1 will have user-2 in his friend's list and vice-versa. 
-* Post building the graph, the median degree of all the users in the graph is calculated for future reference
-* `HashMap<userID1, HashSet<user-1's friends>>`: Map's lookout is O(1) and so is Set's. 
-Once the graph is created, `stream_payment` is read line by line and the users in each transaction are passed onto the graph to check for features.
-###Feature 1
+* Post building the graph, the median degree of all the users in the graph is calculated for future reference.
+Once the graph is created, `stream_payment.txt` is read line by line and the users in each transaction are passed onto the graph to check for features.
+
+### Feature 1
 For feature 1, the user-1's adjacency list is directly retrieved and checked if it contains user-2. 
-* Intuitively we can say that a direct friend is of degree 1. So it should even satisfy the other two features. Thus if any transaction in the 
+* Intuitively we can say that a direct friend is of degree 1. So it should even satisfy the other two features. Thus if any transaction in the stream is verified through feature 1, then it passes all the other features. Here redundancy is reduced by not checking the other two features again. 
 
 ### Feature 2
-The PayMo team is concerned that these warnings could be annoying because there are many users who haven't had transactions, but are still in similar social networks. 
+For feature 2, both the users' adjacency lists are retrieved and compared for mutual friend. If found, this passes the third feature as well and so it can be avoided.
 
-For example, User A has never had a transaction with User B, but both User A and User B have made transactions with User C, so User B is considered a "friend of a friend" for User A.
+### Feature 3
+For this feature, to find if the user-2 is under 4 degree distance, I have used graph traversal to find the distance between the users. 
+* Finding the length "shortest path" between the users will result in degree of seperation of the users!
+* To reduce the time complexity, "Bi-directional Breadth-first search" is used. It will perform BFS from both the ends till they collide.
 
-For this reason, User A and User B should be able to pay each other without triggering a warning notification since they're "2nd degree" friends. 
+### Feature 4
 
-<img src="./images/friend-of-a-friend1.png" width="500">
+* Intuitively, a user with abnormally huge degree of connections and who only requests funds but never pays can be suspected as a potential spammer or scammer
+For this, the median of degrees of the all the users calculated earlier is used as base and compared with those users who in the past requested more than ever paying. If it is beyond a certain threshold (say 50%), the transaction is flagged as potentially unverified.
 
-To account for this, PayMo would like you to also implement this feature. When users make a payment, they'll be notified when the other user is outside of their "2nd-degree network".
+###Other considerations
 
-* "unverified: This user is not a friend or a "friend of a friend". Are you sure you would like to proceed with this payment?"
-
-
-###Feature 3
-More generally, PayMo would like to extend this feature to larger social networks. Implement a feature to warn users only when they're outside the "4th degree friends network".
-
-<img src="./images/fourth-degree-friends2.png" width="600">
-
-In the above diagram, payments have transpired between User
-
-* A and B 
-* B and C 
-* C and D 
-* D and E 
-* E and F
-
-Under this feature, if User A were to pay User E, there would be no warning since they are "4th degree friends". 
-
-However, if User A were to pay User F, a warning would be triggered as their transaction is outside of the "4th-degree friends network."
-
-(Note that if User A were to pay User C instead, there would be no warning as they are "2nd-degree" friends and within the "4th degree network") 
-
-###Other considerations and optional features
 
 It's critical that these features don't take too long to run. For example, if it took 5 seconds when you make a payment to check whether a user is in your network, that would ruin your user experience and wouldn't be acceptable.
 
