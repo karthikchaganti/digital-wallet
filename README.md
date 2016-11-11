@@ -6,6 +6,7 @@
 1. [Approach to the problem] (README.md#Approach-to-the-problem)
 2. [Details of Implementation] (README.md#details-of-implementation)
 3. [Features] (README.md#feature-1)
+4. [Assumptions] (README.md#Assumptions)
 4. [How to Run?] (README.md#how-to-run)
 5. [Description of Data] (README.md#description-of-data)
 6. [Original Problem Description] (README.md#original-problem-description)
@@ -42,9 +43,12 @@ For this feature, to find if the user-2 is under 4 degree distance, I have used 
 ### Other considerations
 Typically, a user who request funds more than ever paying and recieved them from many out-of fourth degree friends can be tagged as a potential spammer. This can be said as the user is never dealing with friends but rather using the app only with strangers.
 
-## How to run? 
-Run the `run.sh`. Main method is present in `PaymoAntiFraud.java` file.
+### Assumptions
+It is assumed that the graph or rather the model of history need not be updated while reading the stream data. So the data read in stream is merely used to validate on the batch-data modeled graph.
 
+## How to run? 
+Run the `run.sh`. Main method is present in `PaymoAntiFraud.java` file. Due to the heavy data set consisting of 3 million+ records,
+the time taken just to read the files and upate them is itself huge. Moreover running BFS that too bi-directionally is a pretty processing intensive task. That's why a hashmap is used to hold the graph and its data so that it can be divided and ported to servers on cloud or cassandra and run them parallely to achieve better speeds!
 
 ## Description of Data
 [Back to Table of Contents] (README.md#table-of-contents)
