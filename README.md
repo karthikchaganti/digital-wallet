@@ -6,7 +6,7 @@
 1. [Approach to the problem] (README.md#Approach-to-the-problem)
 2. [Details of Implementation] (README.md#details-of-implementation)
 3. [Features] (README.md#feature-1)
-4. [How to Run?] (README.md#how-to-run-?)
+4. [How to Run?] (README.md#how-to-run)
 5. [Description of Data] (README.md#description-of-data)
 6. [Original Problem Description] (README.md#original-problem-description)
 
