@@ -40,7 +40,6 @@ For this feature, to find if the user-2 is under 4 degree distance, I have used 
 * For this, the median of degrees of the all the users calculated earlier is used as base and compared with those users who in the past requested more than ever paying. If it is beyond a certain threshold (say 50%), the transaction is flagged as potentially unverified.
 
 ### Other considerations
-[Back to Table of Contents] (README.md#table-of-contents)
 Typically, a user who request funds more than ever paying and recieved them from many out-of fourth degree friends can be tagged as a potential spammer. This can be said as the user is never dealing with friends but rather using the app only with strangers.
 
 ## How to run? 
