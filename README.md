@@ -1,6 +1,8 @@
-# Table of Contents
+# Digital Wallet - Insight Data Engineering Coding Challenge
 
-1. [Challenge Summary] (README.md#challenge-summary)
+### Table of Contents
+
+1. [Approach to the problem] (README.md#Approach-to-the-problem)
 2. [Details of Implementation] (README.md#details-of-implementation)
 3. [Description of Data] (README.md#description-of-data)
 4. [Writing clean, scalable and well-tested code](README.md#writing-clean-scalable-and-well-tested-code)
@@ -8,9 +10,9 @@
 6. [Testing your directory structure and output format] (README.md#testing-your-directory-structure-and-output-format)
 7. [FAQ] (README.md#faq)
 
-##Challenge Summary
-
-Imagine you're a data engineer at a "digital wallet" company called PayMo that allows users to easily request and make payments to other PayMo users. The team at PayMo has decided they want to implement features to prevent fraudulent payment requests from untrusted users. 
+## Approach to the problem
+To infer or find the relationships between different nodes or users, Graph algorithms serve as the one of the best recipes. Since there are huge number of users and multiple transactions between them, no other datastructure can suit better than graphs. As each user is assigned an unique ID, we can use them to act as distinct vertices of a graph and transaction between them as edges. This vertex-edge relationship can be captured using Adjacency List representation. Adjacency list is better compared to matrix as the no.of transactions in the dataset is in order of millions and moreover there can be multiple transactions between each node. 
+* A HashMap is used to hold the userID and an object that comprises of it's friends list (with whom the user had direct transaction) and some info necessary to perform some inference operations. The friends list is built using HashSet as for the algorithm I chose, multiple transactions between same users are not necessary. And moreover the search in hashset is constant time. HashMap is used as the lookup speeds at different users' data would be O(1) and its easy to store as well as easy to port to servers. 
 
 ###Feature 1
 When anyone makes a payment to another user, they'll be notified if they've never made a transaction with that user before.
