@@ -5,26 +5,25 @@
 1. [Approach to the problem] (README.md#Approach-to-the-problem)
 2. [Details of Implementation] (README.md#details-of-implementation)
 3. [Description of Data] (README.md#description-of-data)
-4. [Writing clean, scalable and well-tested code](README.md#writing-clean-scalable-and-well-tested-code)
-5. [Repo directory structure] (README.md#repo-directory-structure)
-6. [Testing your directory structure and output format] (README.md#testing-your-directory-structure-and-output-format)
-7. [FAQ] (README.md#faq)
 
 ## Approach to the problem
+[Back to Table of Contents] (README.md#table-of-contents)
 To infer or find the relationships between different nodes or users, Graph algorithms serve as the one of the best recipes. Here, since there are huge number of users and multiple transactions between them, no other datastructure can suit better than graphs. As each user is assigned an unique ID, we can use them to act as distinct vertices of a graph and transaction between them as edges. This vertex-edge relationship can be captured using Adjacency List representation. Adjacency list is better compared to matrix as the no.of transactions in the dataset is in order of millions and moreover there can be multiple transactions between each node. 
 * A HashMap is used to hold the userID and an object that comprises of it's friends list (with whom the user had direct transaction) and some info necessary to perform some inference operations. The friends list is built using HashSet as for the algorithm I chose, multiple transactions between same users are not necessary. And moreover the search in hashset is constant time. HashMap is used as the lookup speeds at different users' data would be O(1) and its easy to store as well as easy to port to servers.
 
 ## Details of Implementation
+[Back to Table of Contents] (README.md#table-of-contents)
 ### Modelling of Graph
 By reading the batch_payments, the graph is modelled based on the transactions between different users. An edge between two users is bi-directional, so user-1 will have user-2 in his friend's list and vice-versa. 
 * Post building the graph, the median degree of all the users in the graph is calculated for future reference.
 Once the graph is created, `stream_payment.txt` is read line by line and the users in each transaction are passed onto the graph to check for features.
 
 ### Feature 1
-For feature 1, the user-1's adjacency list is directly retrieved and checked if it contains user-2. 
+If the requester is a friend of payer, then it is a trusted transaction of degree 1. So the user-1's adjacency list is directly retrieved and checked if it contains user-2. 
 * Intuitively we can say that a direct friend is of degree 1. So it should even satisfy the other two features. Thus if any transaction in the stream is verified through feature 1, then it passes all the other features. Here redundancy is reduced by not checking the other two features again. 
 
 ### Feature 2
+
 For feature 2, both the users' adjacency lists are retrieved and compared for mutual friend. If found, this passes the third feature as well and so it can be avoided.
 
 ### Feature 3
@@ -34,62 +33,15 @@ For this feature, to find if the user-2 is under 4 degree distance, I have used 
 
 ### Feature 4
 
-* Intuitively, a user with abnormally huge degree of connections and who only requests funds but never pays can be suspected as a potential spammer or scammer
-For this, the median of degrees of the all the users calculated earlier is used as base and compared with those users who in the past requested more than ever paying. If it is beyond a certain threshold (say 50%), the transaction is flagged as potentially unverified.
+* Intuitively, a user with abnormally huge degree of connections and who only requests funds but never pays can be suspected as a potential spammer or scammer.
+* For this, the median of degrees of the all the users calculated earlier is used as base and compared with those users who in the past requested more than ever paying. If it is beyond a certain threshold (say 50%), the transaction is flagged as potentially unverified.
 
-###Other considerations
-
-
-It's critical that these features don't take too long to run. For example, if it took 5 seconds when you make a payment to check whether a user is in your network, that would ruin your user experience and wouldn't be acceptable.
-
-
-While PayMo is a fictional company, the dataset is quite interesting -- it's inspired by a real social network, includes the time of transaction, and the messages come from real Venmo transactions -- so feel free to implement additional features that might be useful to prevent fraudulent payments.
-
-##Details of implementation
-
+### Other considerations
 [Back to Table of Contents] (README.md#table-of-contents)
-
-With this coding challenge, you should demonstrate strong understanding of computer science fundamentals. We won't be wowed by your knowledge of various available software libraries but will be impressed by your ability to pick and use the best data structures and algorithms for the job. 
-
-We're looking for clean, well-thought-out code that correctly implements the desired features in an optimized way.
-
-We also want to see how you use your programming skills to solve business problems. At a minimum, you should implement the three required features but feel free to expand upon this challenge or add other features you think would prevent fraud and further business goals. Be sure to document these add-ons so we know to look for them. 
-
-###Input
-
-Ideally, payment data would come from a real-time, streaming API, but we don't want this challenge to focus on the relatively uninteresting "DevOps" of connecting to an API.
-
-As a result, you may assume that collecting the payments has been done for you and the data resides in two comma-delimited files in the `paymo_input` directory. 
-
-The first file, `batch_payment.txt`, contains past data that can be used to track users who have previously paid one another. These transactions should be used to build the initial state of the entire user network.
-
-Data in the second file, `stream_payment.txt` should be used to determine whether there's a possibility of fraud and a warning should be triggered.
-
-You should assume that each new line of `stream_payment.txt` corresponds to a new, valid PayMo payment record -- regardless of being 'unverified' -- and design your program to handle a text file with a large number of payments. 
-
-###Output
-
-Your code should process each line in `stream_payment.txt` and for each payment, output a line containing one of two words, `trusted` or `unverified`. 
-
-`trusted` means the two users involved in the transaction have previously paid one another (when implementing Feature 1) or are part of the "friends network" (when implementing Feature 2 and 3).
-
-`unverified` means the two users have not previously been involved in a transaction (when implementing Feature 1) or are outside of the "friends network" (when implementing Features 2 and 3)
-
-The output should be written to a text file in the `paymo_output` directory. Because we are asking you to implement a minimum of three features, your program should output to at least three text files in the `paymo_output` directory. 
-
-Each output file should be named after the applicable feature you implemented (i.e., `output1.txt`, `output2.txt` and `output3.txt`)
-
-For example, if there were 5 lines of transactions in the `stream_payment.txt`, then the following `output1.txt` file for Feature 1 could look like this: 
-
-	trusted
-	trusted
-	unverified
-	unverified
-	trusted
+Typically, a user who request funds more than ever paying and recieved them from many out-of fourth degree friends can be tagged as a potential spammer. This can be said as the user is never dealing with friends but rather using the app only with strangers.
 
 
-##Description of Data
-
+# Description of Data
 [Back to Table of Contents] (README.md#table-of-contents)
 
 The `batch_payment.txt` and `stream_payment.txt` input files are formatted the same way.
@@ -101,8 +53,6 @@ As you would expect of comma-separated-value files, the first line is the header
 * `id2`: ID of the user receiving the payment 
 * `amount`: Amount of the payment 
 * `message`: Any message the payer wants to associate with the transaction
-
-Following the header, you can assume each new line contains a single new PayMo payment record with each field delimited by a comma. In some cases, the field can contain Unicode as PayMo users are fond of placing emojis in their messages. For simplicity's sake, you can choose to ignore those emojis.
 
 For example, the first 10 lines (including the header) of `batch_payment.txt` or `stream_payment.txt` could look like: 
 
@@ -117,148 +67,5 @@ For example, the first 10 lines (including the header) of `batch_payment.txt` or
 	2016-11-02 09:49:29, 70230, 59830, 19.33, Kale Salad
 	2016-11-02 09:49:29, 63967, 3197, 38.09, Diner
 	 
-
-##Writing clean, scalable and well-tested code
-[Back to Table of Contents] (README.md#table-of-contents)
-
-As a data engineer, it’s important you write clean, well-documented code that scales for large amounts of data. For this reason, it’s important to ensure your solution works well for a huge number of payments coming in a short period of time.
-
-It's also important to use software engineering best practices like **unit tests**, especially since public data is not clean and predictable. For more details about the implementation, please refer to the FAQ below or email us at <mailto:cc@insightdataengineering.com>
-
-You may write your solution in any mainstream programming language, such as C, C++, Java, JavaScript, Python, Ruby, or Scala. Once completed, submit a link to a Github (or Bitbucket) repo with your source code. 
-
-In addition to the source code, the top-most directory of your repo must include the `paymo_input` and `paymo_output` directories, and a shell script named `run.sh` that compiles and runs the program(s) that implement these features. 
-
-If your solution requires additional libraries, environments, or dependencies, you must specify these in your README documentation (otherwise we won't be able to test it). See the figure below for the required structure of the top-most directory in your repo, or simply <i>clone</i> this repo, but **please don't fork** it.
-
-##Repo directory structure
-[Back to Table of Contents] (README.md#table-of-contents)
-
-Example Repo Structure
-
-	├── README.md 
-	├── run.sh
-	├── src
-	│  	└── antifraud.java
-	├── paymo_input
-	│   └── batch_payment.txt
-	|   └── stream_payment.txt
-	├── paymo_output
-	│   └── output1.txt
-	|   └── output2.txt
-	|   └── output3.txt
-	└── insight_testsuite
-	 	   ├── run_tests.sh
-		   └── tests
-	        	└── test-1-paymo-trans
-        		│   ├── paymo_input
-        		│   │   └── batch_payment.txt
-        		│   │   └── stream_payment.txt
-        		│   └── paymo_output
-        		│       └── output1.txt
-        		│       └── output2.txt
-        		│       └── output3.txt
-        		└── your-own-test
-            		 ├── paymo_input
-        		     │   └── batch_payment.txt
-        		     │   └── stream_payment.txt
-        		     └── paymo_output
-        		         └── output1.txt
-        		         └── output2.txt
-        		         └── output3.txt
-
-The contents of `src` do not have to contain the single file called `"antifraud.java"`, you are free to include one or more files and name them as required by your implementation.
-
-##Testing your directory structure and output format
-[Back to Table of Contents] (README.md#table-of-contents)
-
-To make sure that your code has the correct directory structure and the format of the output data in `output1.txt`, `output2.txt` and `output3.txt` is correct, we included a test script, called `run_tests.sh` in the `insight_testsuite` folder.
-
-The tests are stored simply as text files under the `insight_testsuite/tests` folder. Each test should have a separate folder and each should contain a `paymo_input` folder -- where `batch_payment.txt` and `stream_payment.txt` files can be found. There also should be a `paymo_output` folder where `output1.txt`, `output2.txt` and `output3.txt` should reside.
-
-From the `insight_testsuite` folder, you can run the test with the following command:
-
-	insight_testsuite$ ./run_tests.sh 
-
-The output of `run_tests.sh` should look like:
-
-    [PASS]: test-2-paymo-trans (output1.txt)
-    [FAIL]: test-2-paymo-trans (output2.txt)
-    1c1
-    < trusted
-    ---
-    > unverified
-    [PASS]: test-2-paymo-trans (output3.txt
-    [Fri Nov  4 13:20:25 PDT 2016] 2 of 3 tests passed
-
-on failed tests and	
-	
-	[PASS]: test-1-paymo-trans (output1.txt)
-	[PASS]: test-1-paymo-trans (output2.txt)
-	[PASS]: test-1-paymo-trans (output3.txt)
-	[Fri Nov  4 13:20:25 PDT 2016] 3 of 3 tests passed
-on success.
-
-One test has been provided as a way to check your formatting and simulate how we will be running tests when you submit your solution. We urge you to write your own additional tests here as well as for your own programming language. `run_tests.sh` should alert you if the directory structure is incorrect.
-
-Your submission must pass at least the provided test in order to pass the coding challenge.
-
-#FAQ
-
-Here are some common questions we've received.  If you have additional questions, please email us at cc@insightdataengineering.com and we'll answer your questions as quickly as we can, and update this FAQ.
-
-* *Which Github link should I submit?*  
-You should submit the URL for the top-level root of your repository.  For example, this repo would be submitted by copying the URL `https://github.com/InsightDataScience/digital-wallet` into the appropriate field on the application.  Do NOT try to submit your coding challenge using a pull request, which would make your source code publicly available.  
-
-* *Do I need a private Github repo?*  
-No, you may use a public repo, there is no need to purchase a private repo.  You may also submit a link to a Bitbucket repo if you prefer.
-
-* *If User A sends a payment to User B, is that different than if User B sends a payment to User A?*  
-No, for simplicity all relationships should be undirected. Users are "friends" regardless of who initiated the payment.  
-
-* *May I use R, Matlab, or other analytics programming languages to solve the challenge?*  
-It's important that your implementation scales to handle large amounts of data. While many of our Fellows have experience with R and Matlab, applicants have found that these languages are unable to process data in a scalable fashion, so you should consider another language.  
-
-* *May I use distributed technologies like Hadoop or Spark?*  
-While you're welcome to do so, your code will be tested on a single machine so there may not be a significant benefit to using these technologies prior to the program. With that said, learning about distributed systems is a valuable skill for all data engineers.
-
-* *What sort of system should I use to run my program on (Windows, Linux, Mac)?*  
-You may write your solution on any system, but your source code should be portable and work on all systems. Additionally, your `run.sh` must be able to run on either Unix or Linux, as that's the system that will be used for testing. Linux machines are the industry standard for most data engineering teams, so it is helpful to be familiar with this. If you're currently using Windows, we recommend using tools like Cygwin or Docker, or a free online IDE such as [Cloud9](http://c9.io).  
-
-* *How to handle invalid lines?*  
-Firstly it should be noted that the input files are formatted as per Unix/Linux standards where newlines are dictated by a newline character ('\n'). If you are running your code on Windows or specifically detecting for carriage return ('\r') make sure that you update your code to use the correct line delimiter otherwise you may be virtually creating invalid lines. If you are confident this is not the cause of your invalid lines, please let us know at cc@insightdataengineering.com.
-  
-* *Can I use pre-built packages, modules, or libraries?*   
-This coding challenge can be completed without any "exotic" packages. While you may use publicly available packages, modules, or libraries, you must document any dependencies in your accompanying `README` file. When we review your submission, we will download these libraries and attempt to run your program. If you do use a package, you should always ensure that the module you're using works efficiently for the specific use-case in the challenge, since many libraries are not designed for large amounts of data.
-
-* *Can I use a database engine?*   
-This coding challenge can be completed without the use of a database. However, if you must use one, it must be a publicly available one that can be easily installed with minimal configuration.
-
-* *Will you email me if my code doesn't run?*   
-Unfortunately, we receive hundreds of submissions in a very short time and are unable to email individuals if code doesn't compile or run. This is why it's so important to document any dependencies you have, as described in the previous question. We will do everything we can to properly test your code, but this requires good documentation. More so, we have provided a test suite so you can confirm that your directory structure and format are correct.
-
-* *Do I need to use multi-threading?*   
-No, your solution doesn't necessarily need to include multi-threading - there are many solutions that don't require multiple threads/cores or any distributed systems, but instead use efficient data structures.  
-
-* *Do I need to account for an updating `stream_payment.txt` file?*   
-No, your solution doesn't have to re-process `stream_payment.txt` multiple times. If you were doing this project as a data engineer in industry, you would probably connect to a RESTful API to get one transaction at a time, but this is beyond the scope of this challenge. Instead, you should imagine that each line corresponds to a new sequential transaction. 
-
-* *What should the format of the output be?*  
-In order to be tested correctly, you must use the format described above. You can ensure that you have the correct format by using the testing suite we've included. If you are still unable to get the correct format from the debugging messages in the suite, please email us at cc@insightdataengineering.com.
-
-* *Should I check if the files in the input directory are text files or non-text files(binary)?*  
-No, for simplicity you may assume that all of the files in the input directory are text files, with the format as described above.
-
-* *Can I use an IDE like Eclipse or IntelliJ to write my program?*  
-Yes, you can use what ever tools you want -  as long as your `run.sh` script correctly runs the relevant target files and creates the `output1.txt`, `output2.txt`, `output3.txt` files in the `paymo_output` directory.
-
-* *What should be in the `paymo_input` directory?*  
-You can put any text file you want in the directory since our testing suite will replace it. Indeed, using your own input files would be quite useful for testing.
-
-* *How will the coding challenge be evaluated?*  
-Generally, we will evaluate your coding challenge with a testing suite that provides a variety of inputs and checks the corresponding output.  This suite will attempt to use your `run.sh` and is fairly tolerant to different runtime environments.  Of course, there are many aspects (e.g. clean code, documentation) that cannot be tested by our suite, so each submission will also be reviewed manually by a data engineer. 
-
-* *How long will it take for me to hear back from you about my submission?*  
-We receive hundreds of submissions and try to evaluate them all in a timely manner.  We try to get back to all applicants **within two or three weeks of submission**, but if you have a specific deadline that requires expedited review, you may email us at cc@insightdataengineering.com.  
-
-
+# Original Problem Description:
+https://github.com/InsightDataScience/digital-wallet
