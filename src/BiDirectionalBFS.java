@@ -14,7 +14,8 @@ public class BiDirectionalBFS
 		QueueData sourceData = new QueueData(people.get(source));
 		QueueData destData = new QueueData(people.get(destination));
 		
-		while (!sourceData.isFinished() && !destData.isFinished())
+		int counter = 0;
+		while (!sourceData.isFinished() && !destData.isFinished() && counter<=4)
 		{
 			/* Search out from source. */
 			User collision = searchBFS(people, sourceData, destData);
@@ -22,12 +23,20 @@ public class BiDirectionalBFS
 			{
 				return detectCollisionMerger(sourceData, destData, collision.getUserID());
 			}
+			else
+			{
+				counter++;
+			}
 			
 			/* Search out from destination. */
 			collision = searchBFS(people, destData, sourceData);
 			if (collision != null) 
 			{
 				return detectCollisionMerger(sourceData, destData, collision.getUserID());
+			}
+			else
+			{
+				counter++;
 			}
 		}
 		return Long.MAX_VALUE;

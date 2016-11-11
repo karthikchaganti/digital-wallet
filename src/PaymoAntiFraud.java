@@ -7,7 +7,7 @@
  ****************************************************/
 
 /**************************************************************************************************************************************************/
-/* Description: 1. To find the relations namely direct friend, friend of a friend, and 4th degree or below friends, we have to use
+/* Description: 1. To find the relations namely direct friend, friend of a friend, and 4th degree or below friends, we have to use 
  * graph representation. This graph can be represented using an adjacent list which consists of immediate or degree 1 friends of every 
  * node or user. I chose to use HashMap to represent key as user1 and value as Hashset of User objects which wraps around ID of the user
  * and a friendslist of other users with who the primary user transacted in the past. By retrieving this hashset we can infer many of the
@@ -28,6 +28,9 @@
  * they have performed too many transactions out of fourth degree is not constant or possible to set up in the given data. However it is 
  * very useful to detect fraud and warn the users accordingly */
 /**************************************************************************************************************************************************/
+/* ASSUMPTION: that the stream data is only used to run on the past-data modeled graph. The graph remains constant and the new stream data 
+ * is not used to update the existing graph.  */
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
