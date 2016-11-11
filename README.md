@@ -43,11 +43,11 @@ For this feature, to find if the user-2 is under 4 degree distance, I have used 
 [Back to Table of Contents] (README.md#table-of-contents)
 Typically, a user who request funds more than ever paying and recieved them from many out-of fourth degree friends can be tagged as a potential spammer. This can be said as the user is never dealing with friends but rather using the app only with strangers.
 
-# How to run? 
+## How to run? 
 Run the `run.sh`. Main method is present in `PaymoAntiFraud.java` file.
 
 
-# Description of Data
+## Description of Data
 [Back to Table of Contents] (README.md#table-of-contents)
 
 The `batch_payment.txt` and `stream_payment.txt` input files are formatted the same way.
@@ -73,5 +73,5 @@ For example, the first 10 lines (including the header) of `batch_payment.txt` or
 	2016-11-02 09:49:29, 70230, 59830, 19.33, Kale Salad
 	2016-11-02 09:49:29, 63967, 3197, 38.09, Diner
 	 
-# Original Problem Description:
+## Original Problem Description:
 https://github.com/InsightDataScience/digital-wallet
