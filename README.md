@@ -11,15 +11,20 @@
 7. [FAQ] (README.md#faq)
 
 ## Approach to the problem
-To infer or find the relationships between different nodes or users, Graph algorithms serve as the one of the best recipes. Since there are huge number of users and multiple transactions between them, no other datastructure can suit better than graphs. As each user is assigned an unique ID, we can use them to act as distinct vertices of a graph and transaction between them as edges. This vertex-edge relationship can be captured using Adjacency List representation. Adjacency list is better compared to matrix as the no.of transactions in the dataset is in order of millions and moreover there can be multiple transactions between each node. 
-* A HashMap is used to hold the userID and an object that comprises of it's friends list (with whom the user had direct transaction) and some info necessary to perform some inference operations. The friends list is built using HashSet as for the algorithm I chose, multiple transactions between same users are not necessary. And moreover the search in hashset is constant time. HashMap is used as the lookup speeds at different users' data would be O(1) and its easy to store as well as easy to port to servers. 
+To infer or find the relationships between different nodes or users, Graph algorithms serve as the one of the best recipes. Here, since there are huge number of users and multiple transactions between them, no other datastructure can suit better than graphs. As each user is assigned an unique ID, we can use them to act as distinct vertices of a graph and transaction between them as edges. This vertex-edge relationship can be captured using Adjacency List representation. Adjacency list is better compared to matrix as the no.of transactions in the dataset is in order of millions and moreover there can be multiple transactions between each node. 
+* A HashMap is used to hold the userID and an object that comprises of it's friends list (with whom the user had direct transaction) and some info necessary to perform some inference operations. The friends list is built using HashSet as for the algorithm I chose, multiple transactions between same users are not necessary. And moreover the search in hashset is constant time. HashMap is used as the lookup speeds at different users' data would be O(1) and its easy to store as well as easy to port to servers.
 
+## Details of Implementation
+###Modelling of Graph
+By reading the batch_payments, the graph is modelled based on the transactions between different users. An edge between two users is bi-directional, so user-1 will have user-2 in his friend's list and vice-versa. 
+* Post building the graph, the median degree of all the users in the graph is calculated for future reference
+* `HashMap<userID1, HashSet<user-1's friends>>`: Map's lookout is O(1) and so is Set's. 
+Once the graph is created, `stream_payment` is read line by line and the users in each transaction are passed onto the graph to check for features.
 ###Feature 1
-When anyone makes a payment to another user, they'll be notified if they've never made a transaction with that user before.
+For feature 1, the user-1's adjacency list is directly retrieved and checked if it contains user-2. 
+* Intuitively we can say that a direct friend is of degree 1. So it should even satisfy the other two features. Thus if any transaction in the 
 
-* "unverified: You've never had a transaction with this user before. Are you sure you would like to proceed with this payment?"
-
-###Feature 2
+### Feature 2
 The PayMo team is concerned that these warnings could be annoying because there are many users who haven't had transactions, but are still in similar social networks. 
 
 For example, User A has never had a transaction with User B, but both User A and User B have made transactions with User C, so User B is considered a "friend of a friend" for User A.
