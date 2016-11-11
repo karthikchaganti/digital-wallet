@@ -1,13 +1,16 @@
 # Digital Wallet - Insight Data Engineering Coding Challenge
+### by Karthik Chaganti
 
 ### Table of Contents
 
 1. [Approach to the problem] (README.md#Approach-to-the-problem)
 2. [Details of Implementation] (README.md#details-of-implementation)
-3. [Description of Data] (README.md#description-of-data)
+3. [Features] (README.md#Feature-1)
+4. [How to Run?] (README.md#How-to-run-?)
+5. [Description of Data] (README.md#description-of-data)
+6. [Original Problem Description] (README.md#Original-Problem-Description)
 
 ## Approach to the problem
-[Back to Table of Contents] (README.md#table-of-contents)
 To infer or find the relationships between different nodes or users, Graph algorithms serve as the one of the best recipes. Here, since there are huge number of users and multiple transactions between them, no other datastructure can suit better than graphs. As each user is assigned an unique ID, we can use them to act as distinct vertices of a graph and transaction between them as edges. This vertex-edge relationship can be captured using Adjacency List representation. Adjacency list is better compared to matrix as the no.of transactions in the dataset is in order of millions and moreover there can be multiple transactions between each node. 
 * A HashMap is used to hold the userID and an object that comprises of it's friends list (with whom the user had direct transaction) and some info necessary to perform some inference operations. The friends list is built using HashSet as for the algorithm I chose, multiple transactions between same users are not necessary. And moreover the search in hashset is constant time. HashMap is used as the lookup speeds at different users' data would be O(1) and its easy to store as well as easy to port to servers.
 
@@ -39,6 +42,9 @@ For this feature, to find if the user-2 is under 4 degree distance, I have used 
 ### Other considerations
 [Back to Table of Contents] (README.md#table-of-contents)
 Typically, a user who request funds more than ever paying and recieved them from many out-of fourth degree friends can be tagged as a potential spammer. This can be said as the user is never dealing with friends but rather using the app only with strangers.
+
+# How to run? 
+Run the `run.sh`. Main method is present in `PaymoAntiFraud.java` file.
 
 
 # Description of Data
