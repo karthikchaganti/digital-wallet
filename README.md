@@ -5,10 +5,10 @@
 
 1. [Approach to the problem] (README.md#Approach-to-the-problem)
 2. [Details of Implementation] (README.md#details-of-implementation)
-3. [Features] (README.md#Feature-1)
-4. [How to Run?] (README.md#How-to-run-?)
+3. [Features] (README.md#feature-1)
+4. [How to Run?] (README.md#how-to-run-?)
 5. [Description of Data] (README.md#description-of-data)
-6. [Original Problem Description] (README.md#Original-Problem-Description)
+6. [Original Problem Description] (README.md#original-problem-description)
 
 ## Approach to the problem
 To infer or find the relationships between different nodes or users, Graph algorithms serve as the one of the best recipes. Here, since there are huge number of users and multiple transactions between them, no other datastructure can suit better than graphs. As each user is assigned an unique ID, we can use them to act as distinct vertices of a graph and transaction between them as edges. This vertex-edge relationship can be captured using Adjacency List representation. Adjacency list is better compared to matrix as the no.of transactions in the dataset is in order of millions and moreover there can be multiple transactions between each node. 
